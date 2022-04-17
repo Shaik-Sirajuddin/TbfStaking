@@ -30,12 +30,12 @@ const Footer = () => {
                                 // marginBottom: "5px",
                                 // marginLeft: "auto",
                                 // marginRight: "auto",
-                                maxWidth: "200px",
-                                maxHeight: "70px",
+                                maxWidth: "220px",
+                                maxHeight: "220px",
                                 alignItems: "center"
                                 // display: "block"
                             }}
-                            src="/images/text_logo.png"
+                            src="/images/logo.png"
                             alt="tbf" />
                     </div>
                     {/* <div className="col">
@@ -49,9 +49,13 @@ const Footer = () => {
                         borderColor: "#fca903",
                     }} />
                 </div>
-                <div className="row"  >
-                <FaDiscord style={{"display":"inline-flex"}}/>
-                <FaTwitter style={{"display":"inline-flex"}}/>
+                <div className="container"
+                    style={{"display":"inline-block","textAlign": "center","paddingRight":"30px"}}>
+                <a href="https://discord.com/invite/thebigfive" target={"_blank"}><FaDiscord /> </a> 
+                <a href="https://twitter.com/thebigfivenft" target={"_blank"}>
+                <FaTwitter />
+
+                </a>
                 </div>
             </div>
 
