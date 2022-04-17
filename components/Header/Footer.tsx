@@ -41,22 +41,24 @@ const Footer = () => {
                     {/* <div className="col">
                         
                     </div> */}
-                    <div className="col">
-                        <p>Copyright © 2021  The Big Five All Rights Reserved</p>
-                    </div>
-                    <hr style={{
-                        border: "1px solid",
-                        borderColor: "#fca903",
-                    }} />
-                </div>
-                <div className="container"
-                    style={{"display":"inline-block","textAlign": "center","paddingRight":"30px"}}>
+                   
+                    <div className="col"
+                    style={{"display":"inline-block","textAlign": "right","paddingRight":"30px"}}>
                 <a href="https://discord.com/invite/thebigfive" target={"_blank"}><FaDiscord /> </a> 
                 <a href="https://twitter.com/thebigfivenft" target={"_blank"}>
                 <FaTwitter />
 
                 </a>
                 </div>
+                    <hr style={{
+                        border: "1px solid",
+                        borderColor: "#fca903",
+                    }} />
+                     <div className="container">
+                        <p>Copyright © 2021  The Big Five All Rights Reserved</p>
+                    </div>
+                </div>
+                
             </div>
 
 
