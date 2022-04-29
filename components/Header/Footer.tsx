@@ -1,6 +1,6 @@
 /** @jsxImportSource theme-ui */
 import SimpleReactFooter from "simple-react-footer";
-import { FaDiscord ,FaTwitter} from "react-icons/fa";
+import { FaDiscord, FaTwitter } from "react-icons/fa";
 
 const Footer = () => {
 
@@ -25,13 +25,13 @@ const Footer = () => {
                     <div className="col">
                         <img
                             sx={{
-                                // padding: "5px",
+                                padding: "10px",
                                 // marginTop: "5px",
                                 // marginBottom: "5px",
                                 // marginLeft: "auto",
                                 // marginRight: "auto",
-                                maxWidth: "220px",
-                                maxHeight: "220px",
+                                maxWidth: "120px",
+                                maxHeight: "120px",
                                 alignItems: "center"
                                 // display: "block"
                             }}
@@ -41,24 +41,29 @@ const Footer = () => {
                     {/* <div className="col">
                         
                     </div> */}
-                   
-                    <div className="col"
-                    style={{"display":"inline-block","textAlign": "right","paddingRight":"30px"}}>
-                <a href="https://discord.com/invite/thebigfive" target={"_blank"}><FaDiscord /> </a> 
-                <a href="https://twitter.com/thebigfivenft" target={"_blank"}>
-                <FaTwitter />
 
-                </a>
-                </div>
+                    <div className="col"
+                        style={{ "display": "inline-block", "textAlign": "right", "paddingRight": "30px" }}>
+                        <a style={{ padding: "7px" }} href="https://discord.com/invite/thebigfive" target={"_blank"} rel="noreferrer"><FaDiscord /> </a>
+                        <a style={{ padding: "7px" }} href="https://twitter.com/thebigfivenft" target={"_blank"} rel="noreferrer">
+                            <FaTwitter />
+
+                        </a>
+                    </div>
                     <hr style={{
                         border: "1px solid",
                         borderColor: "#fca903",
+                        textAlign: "center"
                     }} />
-                     <div className="container">
-                        <p>Copyright © 2021  The Big Five All Rights Reserved</p>
+                    <div className="container" >
+                        <p style={{
+                            textAlign: "center",
+                            margin: "5px",
+                            fontSize: "15px"
+                        }}>Copyright © 2021  The Big Five All Rights Reserved</p>
                     </div>
                 </div>
-                
+
             </div>
 
 

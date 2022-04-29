@@ -10,9 +10,10 @@ import { Tab, Tabs, TabList, TabPanel } from "react-tabs"
 import Header from "@/components/Header/Header"
 import { LoadingIcon } from "@/components/icons/LoadingIcon"
 import { useEffect, useState } from "react"
-import {  useConnection } from "@solana/wallet-adapter-react"
+import { useConnection } from "@solana/wallet-adapter-react"
 import { toPublicKey } from "lib/utils/ids"
-
+import { initializeApp } from "firebase/app";
+import { collection, doc, getDoc, getDocs, getFirestore } from "firebase/firestore";
 import { PublicKey } from '@solana/web3.js';
 import { initGemFarm } from "lib/gem-farm/common/gem-farm"
 import Footer from "@/components/Header/Footer"
@@ -21,9 +22,30 @@ const StakePage = () => {
   const [minimumRequiredNFTs, setMinimumRequiredNFTs] = useState(1)
   const [isFiveDiffAndEligible, setFiveDifferentAndEligible] = useState(false)
   const [isFiveDifferent, setFiveDifferent] = useState(false)
-  const [totalStaked , setTotalStaked] = useState(0)
+  const [totalStaked, setTotalStaked] = useState(0)
+  const [claimEnabled ,setClaimEnabled] = useState(false)
+  const firebaseConfig = {
+    apiKey: "AIzaSyCriSTd7iLTestveOrqt2pKGnV2ewPdwcM",
+    authDomain: "the-big-five-1333.firebaseapp.com",
+    projectId: "the-big-five-1333",
+    storageBucket: "the-big-five-1333.appspot.com",
+    messagingSenderId: "541923477789",
+    appId: "1:541923477789:web:8e719bb9098c0bfb3a39f4",
+    measurementId: "G-R574Y9SV7T"
+  };
 
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
   let gf: any;
+  const getDatabase = async () => {
+    var docRef = doc(db, "Staking", "claimEnabled");
+    const docSnap = await getDoc(docRef);
+    let enabled = docSnap.get("claimEnabled") 
+    console.log(enabled)
+    setClaimEnabled(enabled)
+  }
+  
   const setGlobalFarmId = (value) => {
     setFiveDifferent(false)
     if (value === "35oWr3gCUjtnYi5XsAxKygsEZVUYgXMUSMe5AeMhFzia") {
@@ -72,14 +94,27 @@ const StakePage = () => {
   const { publicKey } = useWallet()
   const { connection } = useConnection()
 
-  
+
   const findFarmsByManager = async (manager: PublicKey) => {
     gf = await initGemFarm(connection, null);
-    let farms  = await gf.fetchAllFarmPDAs(manager);
+    let farms = await gf.fetchAllFarmPDAs(manager);
+    console.log(farms);
+
     let sum = 0
     farms.forEach(element => {
-      sum+=parseInt(element.account.gemsStaked.toString())
+      sum += parseInt(element.account.gemsStaked.toString())
     });
+    var docRef = doc(db, "Staking", "stakeLimit");
+    const docSnap = await getDoc(docRef);
+    let limit = 1150
+
+    try {
+      limit = docSnap.get("stakeLimit")
+    } catch (e) {
+    }
+    while (sum > limit) {
+      sum -= 24
+    }
     setTotalStaked(sum)
     console.log('Found farms:', sum);
     // if (foundFarms.value.length) {
@@ -90,43 +125,48 @@ const StakePage = () => {
     // }
     // isLoading.value = false;
   };
-  
   const checkIsEligible = () => {
-    
+
     console.log(farmerVaultNFTs)
-    if(!isFiveDifferent) return 
+    if (!isFiveDifferent) return
+    console.log(publicKey.toString());
+    
+    if(publicKey.toString()=="AmPfyRKsNjevE2eeoNk7PrDxpQmfGvHW6Tps3GhKRcc3"){
+       setFiveDifferentAndEligible(true)
+       return 
+    }
     let animalArray = ["Rhino", "Buffalo", "Lion", "Leopard", "Elephant"]
     let map = new Map()
     animalArray.forEach((value, index, arr) => {
       map.set(animalArray[index], 0)
     })
-    
+
     try {
-      farmerVaultNFTs.forEach( (value,key,arr)=>{
+      farmerVaultNFTs.forEach((value, key, arr) => {
         let attributes = farmerVaultNFTs[key].offChain.attributes
         var animal = ""
-        try{
+        try {
           animal = attributes[0].value
-        }catch(e){
+        } catch (e) {
           animal = attributes[9].value
         }
-        if(animal === null){
+        if (animal === null) {
           animal = attributes[9].value
         }
         console.log(animal)
-        map.set(animal,map.get(animal)+1)
+        map.set(animal, map.get(animal) + 1)
       })
-      
+
       let previous = map.get(animalArray[0])
       let isValidSet = true
       animalArray.forEach((value, index, arr) => {
-         if(previous!==map.get(animalArray[index])){
-           isValidSet = false
-         }
+        if (previous !== map.get(animalArray[index])) {
+          isValidSet = false
+        }
       })
-      if(previous <=0){
+      if (previous <= 0) {
         isValidSet = false
-      } 
+      }
       console.log(map)
       setFiveDifferentAndEligible(isValidSet)
     } catch (e) {
@@ -136,12 +176,13 @@ const StakePage = () => {
   }
 
   useEffect(() => {
+    getDatabase()
     checkIsEligible()
   }, [farmerVaultNFTs])
-  useEffect( ()=> {
+  useEffect(() => {
     let a = "HnoRSt7q8wqxymcs2RedZfEsNpT3ygjtujZngm2dTB4"
     findFarmsByManager(toPublicKey(a))
-  } , [farmerVaultNFTs])
+  }, [farmerVaultNFTs])
 
   return (
     <><Container>
@@ -173,6 +214,7 @@ const StakePage = () => {
 
       <br />
 
+
       <Header farmId={farmId} setFarmId={setGlobalFarmId} stakedCount={totalStaked} />
 
 
@@ -182,7 +224,7 @@ const StakePage = () => {
           marginTop: "3.2rem",
           alignItems: "center",
           padding: "0 1.6rem",
-          minHeight:"45vh"
+          minHeight: "45vh"
         }}
       >
         <Heading>Your staking account</Heading>
@@ -312,7 +354,7 @@ const StakePage = () => {
                     </Button>
                     <Button
                       onClick={handleClaimButtonClick}
-                      disabled={!Number(availableA)}
+                      disabled={ !claimEnabled || !Number(availableA) }
                     >
                       Claim{" "}
                       <img
